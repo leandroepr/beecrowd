@@ -1,0 +1,40 @@
+const input = "91.01\n";
+const lines = input.split("\n");
+const bankNotes = [100, 50, 20, 10, 5, 2];
+const coins = [1, 0.5, 0.25, 0.1, 0.05, 0.01];
+
+const resolution = (lines, bankNotes, coins) => {
+  const adaptParams = (lines) => Number(lines[0]);
+  const changeCurrency = (value, currency) => {
+    const amount = Math.floor(value / currency);
+    const rest = value % currency;
+    return { amount, rest };
+  };
+  const notesAndCoins = [...bankNotes, ...coins];
+  let subtotal = adaptParams(lines);
+  const resultMap = {};
+  notesAndCoins.forEach((noteOrCoin) => {
+    const { amount, rest } = changeCurrency(subtotal, noteOrCoin);
+    resultMap[noteOrCoin] = amount;
+    subtotal = rest;
+  });
+  return resultMap;
+};
+
+const formatAnswer = (changesMap, notes, coins) => {
+  const logs = [];
+  logs.push("NOTES");
+  const formattedNotes = notes.map(
+    (note) => `${changesMap[note]} nota(s) de R$ ${note.toFixed(2)}`
+  );
+  logs.push(...formattedNotes);
+  logs.push("MOEDAS");
+  const formattedCoins = coins.map(
+    (coin) => `${changesMap[coin]} moeda(s) de R$ ${coin.toFixed(2)}`
+  );
+  logs.push(...formattedCoins);
+  return logs.join("\n");
+};
+
+const answer = resolution(lines, bankNotes, coins);
+console.log(formatAnswer(answer, bankNotes, coins));
